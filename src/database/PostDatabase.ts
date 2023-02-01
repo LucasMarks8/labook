@@ -1,41 +1,41 @@
-import { TPostsDB, UpdatedPost } from "../Types";
+import { PostDB, UpdatedPost } from "../Types";
 import { BaseDatabase } from "./BaseDatabase";
 
 export class PostDatabase extends BaseDatabase {
 
     public static TABLE_POST = "posts"
 
-    public async findPosts(q: string | undefined): Promise<TPostsDB[]> {
-        let postsDB
+    public async findPosts(q: string | undefined): Promise<PostDB[]> {
+        let postDB
 
         if (q) {
-            const result: TPostsDB[] = await BaseDatabase
+            const result: PostDB[] = await BaseDatabase
                 .connection(PostDatabase.TABLE_POST)
                 .where("content", "LIKE", `%${q}%`)
-            postsDB = result
+            postDB = result
         } else {
-            const result: TPostsDB[] = await BaseDatabase
+            const result: PostDB[] = await BaseDatabase
                 .connection(PostDatabase.TABLE_POST)
-            postsDB = result
+            postDB = result
         }
-        return postsDB
+        return postDB
     }
 
-    public async findPostById(id: string | undefined): Promise<TPostsDB | undefined> {
-        const [postDBExists]: TPostsDB[] | undefined[] = await BaseDatabase
+    public async findPostById(id: string | undefined): Promise<PostDB | undefined> {
+        const [postDBExists]: PostDB[] | undefined[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POST)
             .where({ id })
         return postDBExists
     }
 
-    public async findUserById(creatorId: string | undefined): Promise<TPostsDB | undefined> {
-        const [userDBExists]: TPostsDB[] | undefined[] = await BaseDatabase
+    public async findUserById(creatorId: string | undefined): Promise<PostDB | undefined> {
+        const [userDBExists]: PostDB[] | undefined[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POST)
             .where({ id: creatorId })
         return userDBExists
     }
 
-    public async insertPost(newPostDB: TPostsDB): Promise<void> {
+    public async insertPost(newPostDB: PostDB): Promise<void> {
         await BaseDatabase
             .connection(PostDatabase.TABLE_POST)
             .insert(newPostDB)

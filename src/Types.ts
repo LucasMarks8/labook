@@ -1,9 +1,9 @@
-export type Enum = {
+export interface Enum {
     admin: "ADMIN",
     normal: "NORMAL"
 }
 
-export type TUsersDB = {
+export interface UserDB {
     id: string,
     name: string,
     email: string,
@@ -12,7 +12,7 @@ export type TUsersDB = {
     created_at: string
 }
 
-export type TPostsDB = {
+export interface PostDB {
     id: string,
     creator_id: string,
     content: string,
