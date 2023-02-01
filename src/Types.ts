@@ -22,3 +22,9 @@ export type TPostsDB = {
     updated_at: string,
 }
 
+export interface UpdatedPost {
+    content: string,
+    likes: boolean,
+    dislikes: boolean
+}
+
