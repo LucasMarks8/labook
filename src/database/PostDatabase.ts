@@ -5,27 +5,18 @@ export class PostDatabase extends BaseDatabase {
 
     public static TABLE_POST = "posts"
 
-    public async findPosts(q: string | undefined): Promise<PostDB[]> {
-        let postDB
+    public async findPosts() {
+        const postDB: PostDB[] = await BaseDatabase
+            .connection(PostDatabase.TABLE_POST)
 
-        if (q) {
-            const result: PostDB[] = await BaseDatabase
-                .connection(PostDatabase.TABLE_POST)
-                .where("content", "LIKE", `%${q}%`)
-            postDB = result
-        } else {
-            const result: PostDB[] = await BaseDatabase
-                .connection(PostDatabase.TABLE_POST)
-            postDB = result
-        }
         return postDB
     }
 
     public async findPostById(id: string | undefined): Promise<PostDB | undefined> {
-        const [postDBExists]: PostDB[] | undefined[] = await BaseDatabase
+        const postDBExists: PostDB[] | undefined[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POST)
             .where({ id })
-        return postDBExists
+        return postDBExists[0]
     }
 
     public async findUserById(creatorId: string | undefined): Promise<PostDB | undefined> {

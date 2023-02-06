@@ -1,5 +1,9 @@
 -- Active: 1675122567092@@127.0.0.1@3306
 
+DROP TABLE posts;
+
+DROP TABLE users;
+
 CREATE TABLE
     users (
         id TEXT PRIMARY KEY UNIQUE NOT NULL,
@@ -32,9 +36,9 @@ CREATE TABLE
 
 INSERT INTO posts (id, creator_id, content, likes, dislikes) 
 VALUES
-    ("p001", "u001", "Você é nota 10", true, false),
-    ("p002", "u002", "Hoje vou para a praia", false, true),
-    ("p003", "u003", "Hoje vou ao estádio com meu irmão", true, false);
+    ("p001", "u001", "Você é nota 10", false, false),
+    ("p002", "u002", "Hoje vou para a praia", false, false),
+    ("p003", "u003", "Hoje vou ao estádio com meu irmão", false, false);
 
 INSERT INTO users (id, name, email, password, role)
 VALUES

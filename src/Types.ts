@@ -23,8 +23,8 @@ export interface PostDB {
 }
 
 export interface UpdatedPost {
-    content: string,
-    likes: boolean,
-    dislikes: boolean
+    content?: string,
+    likes?: boolean,
+    dislikes?: boolean
 }
 
