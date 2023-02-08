@@ -3,8 +3,8 @@ export class Post {
         private id: string,
         private creatorId: string,
         private content: string,
-        private likes: boolean,
-        private dislikes: boolean,
+        private likes: number,
+        private dislikes: number,
         private createdAt: string,
         private updatedAt: string
     ) { }
@@ -25,19 +25,19 @@ export class Post {
         this.content = newContent
     }
 
-    public getLikes(): boolean {
+    public getLikes(): number {
         return this.likes
     }
 
-    public setLikes(newLikes: boolean): void {
+    public setLikes(newLikes: number): void {
         this.likes = newLikes
     }
 
-    public getDislikes(): boolean {
+    public getDislikes(): number {
         return this.dislikes
     }
 
-    public setDislikes(newDislikes: boolean): void {
+    public setDislikes(newDislikes: number): void {
         this.dislikes = newDislikes
     }
 

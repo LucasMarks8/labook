@@ -19,8 +19,8 @@ CREATE TABLE
         id TEXT PRIMARY KEY UNIQUE NOT NULL,
         creator_id TEXT NOT NULL,
         content TEXT NOT NULL,
-        likes BOOLEAN,
-        dislikes BOOLEAN,
+        likes INTEGER,
+        dislikes INTEGER,
         created_at TEXT DEFAULT (DATETIME()) NOT NULL,
         updated_at TEXT DEFAULT (DATETIME()) NOT NULL,
         FOREIGN KEY (creator_id) REFERENCES users(id)
@@ -36,9 +36,9 @@ CREATE TABLE
 
 INSERT INTO posts (id, creator_id, content, likes, dislikes) 
 VALUES
-    ("p001", "u001", "Você é nota 10", false, false),
-    ("p002", "u002", "Hoje vou para a praia", false, false),
-    ("p003", "u003", "Hoje vou ao estádio com meu irmão", false, false);
+    ("p001", "u001", "Você é nota 10", 0, 0),
+    ("p002", "u002", "Hoje vou para a praia", 0, 0),
+    ("p003", "u003", "Hoje vou ao estádio com meu irmão", 0, 0);
 
 INSERT INTO users (id, name, email, password, role)
 VALUES
