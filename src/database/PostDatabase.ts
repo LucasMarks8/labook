@@ -5,7 +5,7 @@ export class PostDatabase extends BaseDatabase {
 
     public static TABLE_POST = "posts"
 
-    public async findPosts() {
+    public async findPosts(): Promise<PostDB[]> {
         const postDB: PostDB[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POST)
 
@@ -16,14 +16,16 @@ export class PostDatabase extends BaseDatabase {
         const postDBExists: PostDB[] | undefined[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POST)
             .where({ id })
+
         return postDBExists[0]
     }
 
-    public async findUserById(creatorId: string | undefined): Promise<PostDB | undefined> {
-        const [userDBExists]: PostDB[] | undefined[] = await BaseDatabase
+    public async findPostByUserById(creatorId: string): Promise<PostDB | undefined> {
+        const userDBExists: PostDB[] | undefined[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POST)
-            .where({ id: creatorId })
-        return userDBExists
+            .where({ creator_id: creatorId })
+
+        return userDBExists[0]
     }
 
     public async insertPost(newPostDB: PostDB): Promise<void> {
@@ -32,7 +34,7 @@ export class PostDatabase extends BaseDatabase {
             .insert(newPostDB)
     }
 
-    public async editPost(newPostDB: UpdatedPost, id: string): Promise<void> {
+    public async editPost(newPostDB: PostDB, id: string): Promise<void> {
         await BaseDatabase.connection(PostDatabase.TABLE_POST)
             .update(newPostDB)
             .where({ id })

@@ -1,6 +1,6 @@
-export interface Enum {
-    admin: "ADMIN",
-    normal: "NORMAL"
+export enum Function {
+    admin = "ADMIN",
+    normal = "NORMAL"
 }
 
 export interface UserDB {
@@ -8,7 +8,7 @@ export interface UserDB {
     name: string,
     email: string,
     password: string,
-    role: Enum,
+    role: Function,
     created_at: string
 }
 
@@ -16,15 +16,15 @@ export interface PostDB {
     id: string,
     creator_id: string,
     content: string,
-    likes: boolean,
-    dislikes: boolean,
+    likes: number,
+    dislikes: number,
     created_at: string,
     updated_at: string,
 }
 
 export interface UpdatedPost {
     content?: string,
-    likes?: boolean,
-    dislikes?: boolean
+    likes?: number,
+    dislikes?: number
 }
 
