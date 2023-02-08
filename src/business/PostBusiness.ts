@@ -1,4 +1,6 @@
 import { PostDatabase } from "../database/PostDatabase"
+import { BadRequestError } from "../errors/BadRequestError"
+import { NotFoundError } from "../errors/NotFoundError"
 import { Post } from "../models/Post"
 import { PostDB } from "../Types"
 
@@ -27,30 +29,30 @@ export class PostBusiness {
         const { id, creatorId, content, likes, dislikes } = input
 
         if (typeof id !== "string") {
-            throw new Error("'id' deve ser string")
+            throw new BadRequestError("'id' deve ser string")
         }
 
         if (typeof creatorId !== "string") {
-            throw new Error("'title' deve ser string")
+            throw new BadRequestError("'title' deve ser string")
         }
 
         if (typeof content !== "string") {
-            throw new Error("'duration' deve ser string")
+            throw new BadRequestError("'duration' deve ser string")
         }
 
         if (typeof likes !== "boolean") {
-            throw new Error("'likes' deve ser bolean")
+            throw new BadRequestError("'likes' deve ser bolean")
         }
 
         if (typeof dislikes !== "boolean") {
-            throw new Error("'dislikes' deve ser bolean")
+            throw new BadRequestError("'dislikes' deve ser bolean")
         }
 
         const postDatabase = new PostDatabase()
         const postDBExists = await postDatabase.findPostById(id)
 
         if (postDBExists) {
-            throw new Error("'id' já existe")
+            throw new BadRequestError("'id' já existe")
         }
 
         const newPost = new Post(
@@ -87,13 +89,13 @@ export class PostBusiness {
         const postDatabase = new PostDatabase()
 
         if (idToEdit[0] !== "p") {
-            throw new Error("'id' deve iniciar com a letra 'p'");
+            throw new BadRequestError("'id' deve iniciar com a letra 'p'");
         }
 
         const post = await postDatabase.findPostById(idToEdit)
 
         if (!post) {
-            throw new Error("post não encontrado")
+            throw new NotFoundError("post não encontrado")
         }
 
         const newPost = new Post(
@@ -108,21 +110,21 @@ export class PostBusiness {
 
         if (content !== undefined) {
             if (typeof content !== "string") {
-                throw new Error("'content' deve ser string");
+                throw new BadRequestError("'content' deve ser string");
             }
             newPost.setContent(content)
         }
 
         if (likes !== undefined) {
             if (typeof likes !== "boolean") {
-                throw new Error("'likes' deve ser bolean")
+                throw new BadRequestError("'likes' deve ser bolean")
             }
             newPost.setLikes(likes)
         }
 
         if (dislikes !== undefined) {
             if (typeof dislikes !== "boolean") {
-                throw new Error("'dislikes' deve ser bolean")
+                throw new BadRequestError("'dislikes' deve ser bolean")
             }
             newPost.setDislikes(dislikes)
         }
@@ -158,7 +160,7 @@ export class PostBusiness {
         const postDBExists = await postDatabase.findPostById(idToDelete)
 
         if (!postDBExists) {
-            throw new Error("post não encontrado")
+            throw new NotFoundError("post não encontrado")
         }
         await postDatabase.deletePost(idToDelete)
 
