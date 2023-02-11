@@ -1,9 +1,12 @@
 import { UserDatabase } from "../database/UserDatabase";
-import { EditUserInputDTO } from "../dtos/UserDTO";
+import { EditUserInputDTO, SignupUserInputDTO } from "../dtos/UserDTO";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
 import { User } from "../models/User";
 import { UserDB } from "../Types";
+
+export const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+export const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,12}$/g
 
 export class UserBusiness {
     constructor(
@@ -29,13 +32,15 @@ export class UserBusiness {
         })
     }
 
-    public createUser = async (input: any) => {
+    public signupUser = async (input: SignupUserInputDTO) => {
         const { id, name, email, password, role } = input
 
-        const userDBExists = await this.userDatabase.findUserById(id)
+        if (!email.match(regexEmail)) {
+            throw new BadRequestError("'email' deve possuir letras minúsculas, deve ter um @, letras minúsculas, ponto (.) e de 2 a 4 letras minúsculas")
+        }
 
-        if (userDBExists) {
-            throw new BadRequestError("'id' já existe");
+        if (!password.match(regexPassword)) {
+            throw new BadRequestError("'password' deve possuir entre 8 e 12 caracteres, com letras maiúsculas e minúsculas e no mínimo um número e um caractere especial");
         }
 
         const newUser = new User(
@@ -98,9 +103,9 @@ export class UserBusiness {
             newUser.setPassword(password)
         }
 
-        if (role !== undefined) {
-            newUser.setRole(role)
-        }
+        // if (role !== undefined) {
+        //     newUser.setRole(role)
+        // }
 
         const newUserDB: UserDB = {
             id: newUser.getId(),

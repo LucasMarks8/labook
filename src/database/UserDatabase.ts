@@ -20,7 +20,7 @@ export class UserDatabase extends BaseDatabase {
         }
     }
 
-    public async findUserById(id: string | undefined): Promise<UserDB | undefined> {
+    public async findUserById(id: string | undefined) {
         const userDB: UserDB[] | undefined[] = await BaseDatabase
             .connection(UserDatabase.TABLE_USERS)
             .where({ id })
