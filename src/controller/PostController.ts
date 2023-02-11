@@ -11,7 +11,9 @@ export class PostController {
 
     public getPosts = async (req: Request, res: Response) => {
         try {
-            const outPut = await this.postBusiness.getPost()
+            const q = req.query.q as string | undefined
+
+            const outPut = await this.postBusiness.getPost(q)
 
             res.status(200).send(outPut)
         } catch (error) {
@@ -91,4 +93,7 @@ export class PostController {
             }
         }
     }
+
+    
+
 }

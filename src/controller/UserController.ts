@@ -39,7 +39,7 @@ export class UserController {
                 req.body.role
             )
 
-            const outPut = await this.userBusinnes.createUser(input)
+            const outPut = await this.userBusinnes.signupUser(input)
 
             res.status(201).send(outPut)
         } catch (error) {

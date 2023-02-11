@@ -1,4 +1,4 @@
-import { Enum } from "../Types"
+import {  Role } from "../Types"
 
 export class User {
     constructor(
@@ -6,7 +6,7 @@ export class User {
         private name: string,
         private email: string,
         private password: string,
-        private role: Enum,
+        private role: Role,
         private createdAt: string
     ) { }
 
@@ -38,11 +38,11 @@ export class User {
         this.password = newPassword
     }
 
-    public getRole(): Enum {
+    public getRole(): Role {
         return this.role
     }
 
-    public setRole(newRole: Enum): void {
+    public setRole(newRole: Role): void {
         this.role = newRole
     }
 
