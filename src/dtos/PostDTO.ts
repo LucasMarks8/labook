@@ -15,7 +15,6 @@ export interface GetPostWithUserDTO {
 }
 
 export interface CreatePostInputDTO {
-    id: string,
     creatorId: string,
     content: string,
     likes: number,
@@ -54,33 +53,24 @@ export interface EditPostOutputDTO {
     }
 }
 
-export interface EditLikeInputDTO {
-    postId: string,
-    creatorId: string,
-    likes: number | undefined,
-    dislikes: number | undefined
-}
+// export interface EditLikeInputDTO {
+//     postId: string,
+//     creatorId: string,
+//     likes: number | undefined,
+//     dislikes: number | undefined
+// }
 
 export interface EditLikeOutputDTO {
-    message: string,
-    post: {
-        likes: number,
-        dislikes: number
-    }
+    message: string
 }
 
 export class PostDTO {
     public createPostInput(
-        id: unknown,
         creatorId: unknown,
         content: unknown,
         likes: unknown,
         dislikes: unknown
     ): CreatePostInputDTO {
-
-        if (typeof id !== "string") {
-            throw new BadRequestError("'id' deve ser string")
-        }
 
         if (typeof creatorId !== "string") {
             throw new BadRequestError("'title' deve ser string")
@@ -99,7 +89,6 @@ export class PostDTO {
         }
 
         const dto: CreatePostInputDTO = {
-            id,
             creatorId,
             content,
             likes,
@@ -184,44 +173,18 @@ export class PostDTO {
         return dto
     }
 
-    public editLikeInput(
-        postId: string,
-        creatorId: string,
-        likes: unknown,
-        dislikes: unknown
-    ) {
+    public EditLikeInput = (likes: unknown): boolean => {
 
-        if (typeof creatorId !== "string") {
-            throw new BadRequestError("'userId' deve ser string")
+        if (typeof likes !== 'boolean') {
+            throw new BadRequestError("'like' deve ser boolean")
         }
 
-        if (typeof likes !== "number") {
-            throw new BadRequestError("'likes' deve ser number")
+        return likes
+    }
+    public EditLikeOutput = (message: string): EditLikeOutputDTO => {
+        return {
+            message: message
         }
-
-        if (typeof dislikes !== "number") {
-            throw new BadRequestError("'dislikes' deve ser number")
-        }
-
-        const dto: EditLikeInputDTO = {
-            postId,
-            creatorId,
-            likes,
-            dislikes
-        }
-
-        return dto
     }
 
-    public editLikeOutput(post: Post): EditLikeOutputDTO {
-        const dto: EditLikeOutputDTO = {
-            message: "Post editado com sucesso",
-            post: {
-                likes: post.getLikes(),
-                dislikes: post.getDislikes()
-            }
-        }
-
-        return dto
-    }
 }
