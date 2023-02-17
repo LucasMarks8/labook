@@ -20,6 +20,14 @@ export class UserDatabase extends BaseDatabase {
         }
     }
 
+    public async findUserByEmail(email: string | undefined) {
+        const userDB: UserDB[] | undefined[] = await BaseDatabase
+            .connection(UserDatabase.TABLE_USERS)
+            .where({ email })
+
+        return userDB[0]
+    }
+
     public async findUserById(id: string | undefined) {
         const userDB: UserDB[] | undefined[] = await BaseDatabase
             .connection(UserDatabase.TABLE_USERS)
@@ -32,19 +40,5 @@ export class UserDatabase extends BaseDatabase {
         await BaseDatabase
             .connection(UserDatabase.TABLE_USERS)
             .insert(newUserDB)
-    }
-
-    public async editUser(newUserDB: UserDB, id: string): Promise<void> {
-        await BaseDatabase
-            .connection(UserDatabase.TABLE_USERS)
-            .update(newUserDB)
-            .where({ id })
-    }
-
-    public async deleteUser(id: string): Promise<void> {
-        await BaseDatabase
-        .connection(UserDatabase.TABLE_USERS)
-        .del()
-        .where({ id })
     }
 }

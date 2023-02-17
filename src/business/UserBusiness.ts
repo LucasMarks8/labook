@@ -1,16 +1,20 @@
 import { UserDatabase } from "../database/UserDatabase";
-import { EditUserInputDTO, SignupUserInputDTO } from "../dtos/UserDTO";
+import { EditUserInputDTO, LoginUserInputDTO, SignupUserInputDTO, SignupUserOutputDTO } from "../dtos/UserDTO";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
 import { User } from "../models/User";
-import { UserDB } from "../Types";
+import { IdGenerator } from "../services/IdGenerator";
+import { TokenManager, TokenPayload } from "../services/TokenManager";
+import { UserDB, Role } from "../Types";
 
 export const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 export const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,12}$/g
 
 export class UserBusiness {
     constructor(
-        private userDatabase: UserDatabase
+        private userDatabase: UserDatabase,
+        private idGenerator: IdGenerator,
+        private tokenManager: TokenManager
     ) { }
 
     public getUser = async (input: any) => {
@@ -33,7 +37,7 @@ export class UserBusiness {
     }
 
     public signupUser = async (input: SignupUserInputDTO) => {
-        const { id, name, email, password, role } = input
+        const { name, email, password } = input
 
         if (!email.match(regexEmail)) {
             throw new BadRequestError("'email' deve possuir letras minúsculas, deve ter um @, letras minúsculas, ponto (.) e de 2 a 4 letras minúsculas")
@@ -43,12 +47,14 @@ export class UserBusiness {
             throw new BadRequestError("'password' deve possuir entre 8 e 12 caracteres, com letras maiúsculas e minúsculas e no mínimo um número e um caractere especial");
         }
 
+        const id = this.idGenerator.generate()
+
         const newUser = new User(
             id,
             name,
             email,
             password,
-            role,
+            Role.NORMAL,
             new Date().toISOString()
         )
 
@@ -63,84 +69,52 @@ export class UserBusiness {
 
         await this.userDatabase.insertUser(newUserDB)
 
-        return ({
-            message: "usuário criado com sucesso",
-            newUser: newUser
-        })
-    }
-
-    public editUser = async (input: EditUserInputDTO) => {
-        const { idToEdit, name, email, password, role } = input
-
-        if (idToEdit[0] !== "u") {
-            throw new BadRequestError("'id' deve iniciar com a letra 'u'")
-        }
-
-        const user = await this.userDatabase.findUserById(idToEdit)
-
-        if (!user) {
-            throw new NotFoundError("usuário não encontrado")
-        }
-
-        const newUser = new User(
-            user.id,
-            user.name,
-            user.email,
-            user.password,
-            user.role,
-            user.created_at
-        )
-
-        if (name !== undefined) {
-            newUser.setName(name)
-        }
-
-        if (email !== undefined) {
-            newUser.setEmail(email)
-        }
-
-        if (password !== undefined) {
-            newUser.setPassword(password)
-        }
-
-        // if (role !== undefined) {
-        //     newUser.setRole(role)
-        // }
-
-        const newUserDB: UserDB = {
+        const tokenPayload: TokenPayload = {
             id: newUser.getId(),
             name: newUser.getName(),
-            email: newUser.getEmail(),
-            password: newUser.getPassword(),
-            role: newUser.getRole(),
-            created_at: newUser.getCreatedAt()
+            role: newUser.getRole()
         }
 
-        await this.userDatabase.editUser(newUserDB, idToEdit)
+        const token = this.tokenManager.createToken(tokenPayload)
 
-        const outPut = {
-            message: "usuário atualizado com sucesso",
-            user: newUser
+        const output = {
+            message: "usuário criado com sucesso",
+            token: token
         }
 
-        return outPut
+        return output
     }
 
-    public deleteUser = async (input: any) => {
-        const { idToDelete } = input
+    public loginUser = async (input: LoginUserInputDTO) => {
+        const { email, password } = input
 
-        const userDBExists = await this.userDatabase.findUserById(idToDelete)
+        const userDB = await this.userDatabase.findUserByEmail(email)
 
-        if (!userDBExists) {
-            throw new NotFoundError("usuário não encontrado");
+        if (!userDB) {
+            throw new NotFoundError("'email' não encontrado");
         }
 
-        await this.userDatabase.deleteUser(idToDelete)
-
-        const outPut = {
-            message: "usuário deletado com sucesso"
+        if (email !== userDB.email) {
+            throw new BadRequestError("'email' incorreto")
         }
 
-        return outPut
+        if (password !== userDB.password) {
+            throw new BadRequestError("'password' incorreto")
+        }
+
+        const tokenPayload: TokenPayload = {
+            id: userDB.id,
+            name: userDB.name,
+            role: userDB.role
+        }
+
+        const token = this.tokenManager.createToken(tokenPayload)
+
+        const output = {
+            message: "usuário logado com sucesso",
+            token: token
+        }
+
+        return output
     }
 }

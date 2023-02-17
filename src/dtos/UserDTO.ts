@@ -3,11 +3,9 @@ import { User } from "../models/User";
 import { Role } from "../Types";
 
 export interface SignupUserInputDTO {
-    id: string
     name: string,
     email: string,
-    password: string,
-    role: Role
+    password: string
 }
 
 export interface SignupUserOutputDTO {
@@ -17,7 +15,7 @@ export interface SignupUserOutputDTO {
         name: string,
         email: string,
         password: string,
-        role: unknown,
+        role: Role,
         createdAt: string
     }
 }
@@ -50,12 +48,12 @@ export interface EditUserOutputDTO {
 }
 
 export class UserDTO {
+    constructor () {}
+
     public signupUserInput(
-        id: string,
         name: unknown,
         email: unknown,
-        password: unknown,
-        role: Role
+        password: unknown
     ): SignupUserInputDTO {
 
         if (typeof name !== "string") {
@@ -71,11 +69,9 @@ export class UserDTO {
         }
 
         const dto: SignupUserInputDTO = {
-            id,
             name,
             email,
-            password,
-            role
+            password
         }
 
         return dto

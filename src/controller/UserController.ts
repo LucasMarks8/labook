@@ -29,14 +29,12 @@ export class UserController {
         }
     }
 
-    public createUser = async (req: Request, res: Response) => {
+    public signupUser = async (req: Request, res: Response) => {
         try {
-            const input = this.userDTO.createUserInput(
-                req.body.id,
+            const input = this.userDTO.signupUserInput(
                 req.body.name,
                 req.body.email,
                 req.body.password,
-                req.body.role
             )
 
             const outPut = await this.userBusinnes.signupUser(input)
@@ -53,19 +51,16 @@ export class UserController {
         }
     }
 
-    public editUser = async (req: Request, res: Response) => {
+    public loginUser = async (req: Request, res: Response) => {
         try {
-            const input = this.userDTO.editUserInput(
-                req.params.id,
-                req.body.name,
+            const input = this.userDTO.loginUserInput(
                 req.body.email,
                 req.body.password,
-                req.body.role
             )
 
-            const outPut = await this.userBusinnes.editUser(input)
+            const outPut = await this.userBusinnes.loginUser(input)
 
-            res.status(200).send(outPut)
+            res.status(201).send(outPut)
         } catch (error) {
             console.log(error)
 
@@ -77,22 +72,4 @@ export class UserController {
         }
     }
 
-    public deleteUser = async (req: Request, res: Response) => {
-        try {
-            const input = { idToDelete: req.params.id }
-
-            const outPut = await this.userBusinnes.deleteUser(input)
-
-            res.status(200).send(outPut)
-
-        } catch (error) {
-            console.log(error)
-
-            if (error instanceof BaseError) {
-                res.status(error.statusCode).send(error.message)
-            } else {
-                res.send("Erro inesperado")
-            }
-        }
-    }
 }

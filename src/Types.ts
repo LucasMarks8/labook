@@ -12,9 +12,13 @@ export interface UserDB {
     created_at: string
 }
 
-export interface PostUser {
+export interface UserOutput {
     id: string,
-    name: string
+    name: string,
+    email: string,
+    password: string,
+    role: Role,
+    createdAt: string
 }
 
 export interface PostDB {
@@ -32,7 +36,7 @@ export interface PostModel {
     content: string,
     likes: number,
     dislikes: number,
-    createdAd: string,
+    createdAt: string,
     updatedAt: string,
     creator: {
         id: string,
@@ -43,17 +47,14 @@ export interface PostModel {
 export interface UpdatedPost {
     content?: string,
     likes?: number,
-    dislikes?: number
+    dislikes?: number, 
+    // updated_at?: string
 }
 
 export interface ActionDB {
     post_id: string,
     user_id: string,
-    like: number
+    like: boolean
 }
 
-export interface EditActionDB {
-    likes: number,
-    dislikes: number
-}
 
