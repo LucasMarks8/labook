@@ -1,5 +1,13 @@
 import { BadRequestError } from "../errors/BadRequestError"
 import { Post } from "../models/Post"
+import { PostModel } from "../Types"
+
+export interface GetPostsInput {
+    q: unknown,
+    token: string | undefined
+}
+
+export type GetPostsOutput = PostModel[]
 
 export interface GetPostWithUserDTO {
     id: string,
@@ -15,84 +23,52 @@ export interface GetPostWithUserDTO {
 }
 
 export interface CreatePostInputDTO {
-    creatorId: string,
     content: string,
-    likes: number,
-    dislikes: number
+    token: string
 }
 
 export interface CreatePostOutputDTO {
     message: string,
-    post: {
-        id: string,
-        creatorId: string,
-        content: string,
-        likes: number,
-        dislikes: number,
-        createdAt: string,
-        updatedAt: string
-    }
+    post: GetPostWithUserDTO
 }
 
 export interface EditPostInputDTO {
-    idToEdit: string,
-    creatorId: string,
+    id: string,
     content: string | undefined,
-    likes: number | undefined,
-    dislikes: number | undefined
+    token: string
 }
 
 export interface EditPostOutputDTO {
-    message: string,
-    post: {
-        id: string,
-        creatorId: string,
-        content: string,
-        likes: number,
-        dislikes: number
-    }
+   message: string,
+   post: GetPostWithUserDTO
 }
-
-// export interface EditLikeInputDTO {
-//     postId: string,
-//     creatorId: string,
-//     likes: number | undefined,
-//     dislikes: number | undefined
-// }
 
 export interface EditLikeOutputDTO {
     message: string
 }
 
+export interface deleteInputDTO {
+    id: string,
+    token: string
+}
+
+export interface deleteOutputDTO {
+    message: string
+}
+
 export class PostDTO {
     public createPostInput(
-        creatorId: unknown,
         content: unknown,
-        likes: unknown,
-        dislikes: unknown
+        token: string
     ): CreatePostInputDTO {
-
-        if (typeof creatorId !== "string") {
-            throw new BadRequestError("'title' deve ser string")
-        }
 
         if (typeof content !== "string") {
             throw new BadRequestError("'duration' deve ser string")
         }
 
-        if (typeof likes !== "number") {
-            throw new BadRequestError("'likes' deve ser number")
-        }
-
-        if (typeof dislikes !== "number") {
-            throw new BadRequestError("'dislikes' deve ser number")
-        }
-
         const dto: CreatePostInputDTO = {
-            creatorId,
             content,
-            likes,
-            dislikes
+            token
         }
 
         return dto
@@ -101,30 +77,21 @@ export class PostDTO {
     public createPostOutput(post: Post): CreatePostOutputDTO {
         const dto: CreatePostOutputDTO = {
             message: "Post registrado com sucesso",
-            post: {
-                id: post.getId(),
-                creatorId: post.getCreatorId(),
-                content: post.getContent(),
-                likes: post.getLikes(),
-                dislikes: post.getDislikes(),
-                createdAt: post.getCreatedAt(),
-                updatedAt: post.getUpdatedAt()
-            }
+            post: post.toBusinessModel()
         }
 
         return dto
     }
 
     public editPostInput(
-        idToEdit: string,
-        creatorId: unknown,
+        id: unknown,
         content: unknown,
-        likes: unknown,
-        dislikes: unknown
+        token: string,
+        updatedAt: string
     ) {
 
-        if (typeof creatorId !== "string") {
-            throw new BadRequestError("'creatorId' deve ser uma string");
+        if (typeof id !== "string") {
+            throw new BadRequestError("'id' deve ser uma string");
         }
 
         if (content !== undefined) {
@@ -133,26 +100,9 @@ export class PostDTO {
             }
         }
 
-
-        if (likes !== undefined) {
-            if (typeof likes !== "number") {
-                throw new BadRequestError("'likes' deve ser number")
-            }
-        }
-
-
-        if (dislikes !== undefined) {
-            if (typeof dislikes !== "number") {
-                throw new BadRequestError("'dislikes' deve ser number")
-            }
-        }
-
         const dto: EditPostInputDTO = {
-            idToEdit,
-            creatorId,
             content,
-            likes,
-            dislikes
+            updatedAt
         }
 
         return dto

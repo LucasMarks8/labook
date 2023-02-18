@@ -21,6 +21,15 @@ export interface UserOutput {
     createdAt: string
 }
 
+export interface UserModel {
+    id: string,
+    name: string,
+    email: string,
+    password: string,
+    role: Role,
+    createdAt: string
+}
+
 export interface PostDB {
     id: string,
     content: string,
@@ -44,11 +53,12 @@ export interface PostModel {
     }
 }
 
+
 export interface UpdatedPost {
     content?: string,
     likes?: number,
     dislikes?: number, 
-    // updated_at?: string
+    updated_at?: string
 }
 
 export interface ActionDB {

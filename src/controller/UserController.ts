@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserBusiness } from "../business/UserBusiness";
-import { UserDTO } from "../dtos/UserDTO";
+import { GetUsersInput, UserDTO } from "../dtos/UserDTO";
 import { BaseError } from "../errors/BaseError";
 
 export class UserController {
@@ -11,8 +11,9 @@ export class UserController {
 
     public getUsers = async (req: Request, res: Response) => {
         try {
-            const input = {
-                q: req.query.q
+            const input: GetUsersInput = {
+                q: req.query.q,
+                token: req.headers.authorization
             }
 
             const outPut = await this.userBusinnes.getUser(input)

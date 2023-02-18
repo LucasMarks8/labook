@@ -1,3 +1,4 @@
+import { User } from "../models/User";
 import { UserDB } from "../Types";
 import { BaseDatabase } from "./BaseDatabase";
 
@@ -28,8 +29,8 @@ export class UserDatabase extends BaseDatabase {
         return userDB[0]
     }
 
-    public async findUserById(id: string | undefined) {
-        const userDB: UserDB[] | undefined[] = await BaseDatabase
+    public async findUserById(id: string | undefined): Promise<UserDB | undefined> {
+        const userDB = await BaseDatabase
             .connection(UserDatabase.TABLE_USERS)
             .where({ id })
 
