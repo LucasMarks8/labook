@@ -1,8 +1,9 @@
 import { UserDatabase } from "../database/UserDatabase";
-import { EditUserInputDTO, LoginUserInputDTO, SignupUserInputDTO, SignupUserOutputDTO } from "../dtos/UserDTO";
+import { GetUsersInput, GetUsersOutput, LoginUserInputDTO, SignupUserInputDTO, SignupUserOutputDTO } from "../dtos/UserDTO";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
 import { User } from "../models/User";
+import { HashManager } from "../services/HashManager";
 import { IdGenerator } from "../services/IdGenerator";
 import { TokenManager, TokenPayload } from "../services/TokenManager";
 import { UserDB, Role } from "../Types";
@@ -14,26 +15,49 @@ export class UserBusiness {
     constructor(
         private userDatabase: UserDatabase,
         private idGenerator: IdGenerator,
-        private tokenManager: TokenManager
+        private tokenManager: TokenManager,
+        private hashManager: HashManager
     ) { }
 
-    public getUser = async (input: any) => {
-        const { q } = input
+    public getUser = async (input: GetUsersInput): Promise<GetUsersOutput> => {
+        const { q, token } = input
+
+        if (typeof q !== "string" && q !== undefined) {
+            throw new BadRequestError("'q' deve ser string ou undefined");
+        }
+
+        if (typeof token !== "string") {
+            throw new BadRequestError("'token' está vazio");
+        }
+
+        const payload = this.tokenManager.getPayload(token)
+
+        if (payload === null) {
+            throw new BadRequestError("token não é válido");
+        }
+
+        if(payload.role !== Role.ADMIN) {
+            throw new BadRequestError("permissão não é suficiente"); 
+        }
 
         const usersDB = await this.userDatabase.findUsers(q)
 
-        const users: User[] = usersDB.map((userDB) => new User(
-            userDB.id,
-            userDB.name,
-            userDB.email,
-            userDB.password,
-            userDB.role,
-            userDB.created_at
-        ))
-        return ({
-            message: "Lista de usuários",
-            users: users
+        const users = usersDB.map((userDB) => {
+           const user = new User(
+                userDB.id,
+                userDB.name,
+                userDB.email,
+                userDB.password,
+                userDB.role,
+                userDB.created_at
+            )
+
+            return user.toBusinessModel()
         })
+
+        const output: GetUsersOutput = users
+
+        return output
     }
 
     public signupUser = async (input: SignupUserInputDTO) => {
@@ -49,11 +73,13 @@ export class UserBusiness {
 
         const id = this.idGenerator.generate()
 
+        const passwordHash = await this.hashManager.hash(password)
+
         const newUser = new User(
             id,
             name,
             email,
-            password,
+            passwordHash,
             Role.NORMAL,
             new Date().toISOString()
         )
@@ -94,21 +120,30 @@ export class UserBusiness {
             throw new NotFoundError("'email' não encontrado");
         }
 
-        if (email !== userDB.email) {
-            throw new BadRequestError("'email' incorreto")
+        const passwordHash = await this.hashManager.compare(password, userDB.password)
+        console.log(password);
+        
+
+        // if(!passwordHash) {
+        //     throw new BadRequestError("'email' ou 'password' incorretos");
+        // }
+
+        const user = new User(
+            userDB.id,
+            userDB.name,
+            userDB.email,
+            userDB.password,
+            userDB.role,
+            userDB.created_at
+        )
+
+        const payload: TokenPayload = {
+            id: user.getId(),
+            name: user.getName(),
+            role: user.getRole()
         }
 
-        if (password !== userDB.password) {
-            throw new BadRequestError("'password' incorreto")
-        }
-
-        const tokenPayload: TokenPayload = {
-            id: userDB.id,
-            name: userDB.name,
-            role: userDB.role
-        }
-
-        const token = this.tokenManager.createToken(tokenPayload)
+        const token = this.tokenManager.createToken(payload)
 
         const output = {
             message: "usuário logado com sucesso",

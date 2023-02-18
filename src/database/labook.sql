@@ -42,9 +42,9 @@ VALUES
 
 INSERT INTO users (id, name, email, password, role)
 VALUES
-    ("u001", "Lucas", "lucas@email.com", "lucas123", "ADMIN"),
-    ("u002", "André", "andre@email.com", "andre123", "NORMAL"),
-    ("u003", "Juliana", "juliana@email.com", "juliana123", "NORMAL");
+    ("u001", "Lucas", "lucas@email.com", "Lucas123!", "ADMIN"),
+    ("u002", "André", "andre@email.com", "Andre123!", "NORMAL"),
+    ("u003", "Juliana", "juliana@email.com", "Juliana123!", "NORMAL");
 
 SELECT * FROM posts;
 

@@ -1,6 +1,13 @@
 import { BadRequestError } from "../errors/BadRequestError";
 import { User } from "../models/User";
-import { Role } from "../Types";
+import { Role, UserModel } from "../Types";
+
+export interface GetUsersInput {
+    q: unknown,
+    token: string | undefined
+}
+
+export type GetUsersOutput = UserModel[]
 
 export interface SignupUserInputDTO {
     name: string,
@@ -26,25 +33,6 @@ export interface LoginUserInputDTO {
 
 export interface LoginUserOutputDTO {
     message: string,
-}
-
-export interface EditUserInputDTO {
-    idToEdit: string,
-    name: string | undefined,
-    email: string | undefined,
-    password: string | undefined
-    role: unknown | undefined
-}
-
-export interface EditUserOutputDTO {
-    message: string,
-    user: {
-        id: string,
-        name: string,
-        email: string,
-        password: string,
-        role: unknown
-    }
 }
 
 export class UserDTO {
@@ -121,57 +109,4 @@ export class UserDTO {
 
         return dto
     }
-
-    public editUserInput(
-        idToEdit: string,
-        name: unknown,
-        email: unknown,
-        password: unknown,
-        role: unknown
-    ) {
-
-        if (name !== undefined) {
-            if (typeof name !== "string") {
-                throw new BadRequestError("'name' deve ser string")
-            }
-        }
-
-        if (email !== undefined) {
-            if (typeof email !== "string") {
-                throw new BadRequestError("'email' deve ser string")
-            }
-        }
-
-        if (password !== undefined) {
-            if (typeof password !== "string") {
-                throw new BadRequestError("'password' deve ser bolean")
-            }
-        }
-
-
-        const dto: EditUserInputDTO = {
-            idToEdit,
-            name,
-            email,
-            password,
-            role
-        }
-
-        return dto
-    }
-
-    public editUserOutput(user: User): EditUserOutputDTO {
-        const dto: EditUserOutputDTO = {
-            message: "usuário editado com sucesso",
-            user: {
-                id: user.getId(),
-                name: user.getName(),
-                email: user.getEmail(),
-                password: user.getPassword(),
-                role: user.getRole()
-            }
-        }
-        return dto
-    }
-
 }

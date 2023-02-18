@@ -1,5 +1,5 @@
-import { GetPostWithUserDTO } from "../dtos/PostDTO";
-import { ActionDB, PostDB } from "../Types";
+import { EditPostOutputDTO, GetPostWithUserDTO } from "../dtos/PostDTO";
+import { ActionDB, PostDB, UpdatedPost } from "../Types";
 import { BaseDatabase } from "./BaseDatabase";
 import { UserDatabase } from "./UserDatabase";
 
@@ -53,8 +53,8 @@ export class PostDatabase extends BaseDatabase {
         return postDBExists[0]
     }
 
-    public async findPostByUserById(creatorId: string): Promise<PostDB | undefined> {
-        const userDBExists: PostDB[] | undefined[] = await BaseDatabase
+    public async findPostByUserById(creatorId: string): Promise<PostDB> {
+        const userDBExists = await BaseDatabase
             .connection(PostDatabase.TABLE_POST)
             .where({ creator_id: creatorId })
 
@@ -67,7 +67,7 @@ export class PostDatabase extends BaseDatabase {
             .insert(newPostDB)
     }
 
-    public async editPost(newPostDB: PostDB, id: string): Promise<void> {
+    public async editPost(newPostDB: UpdatedPost, id: string): Promise<void> {
         await BaseDatabase
             .connection(PostDatabase.TABLE_POST)
             .update(newPostDB)

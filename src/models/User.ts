@@ -1,4 +1,4 @@
-import {  Role } from "../Types"
+import { PostModel, Role, UserDB, UserModel } from "../Types"
 
 export class User {
     constructor(
@@ -52,5 +52,27 @@ export class User {
 
     public setCreatedAt(newCreatedAt: string): void {
         this.createdAt = newCreatedAt
+    }
+
+    public toDBModel(): UserDB {
+        return {
+            id: this.id,
+            name: this.name,
+            email: this.email,
+            password: this.password,
+            role: this.role,
+            created_at: this.createdAt
+        }
+    }
+
+    public toBusinessModel(): UserModel {
+        return {
+            id: this.id,
+            name: this.name,
+            email: this.email,
+            password: this.password,
+            role: this.role,
+            createdAt: this.createdAt
+        }
     }
 }
