@@ -1,21 +1,19 @@
 import { Request, Response } from "express"
 import { PostBusiness } from "../business/PostBusiness"
-import { GetPostsInput, PostDTO } from "../dtos/PostDTO"
+import { CreatePostInputDTO, DeletePostInputDTO, EditPostInputDTO, GetPostsInputDTO, LikeOrDislikePostInputDTO } from "../dtos/UserDTO"
 import { BaseError } from "../errors/BaseError"
 
 export class PostController {
     constructor(
-        private postDTO: PostDTO,
         private postBusiness: PostBusiness
     ) { }
 
     public getPosts = async (req: Request, res: Response) => {
         try {
-            const input: GetPostsInput = {
-                q: req.query.q,
+            const input: GetPostsInputDTO = {
                 token: req.headers.authorization
             }
-            
+
             const outPut = await this.postBusiness.getPost(input)
 
             res.status(200).send(outPut)
@@ -32,12 +30,10 @@ export class PostController {
 
     public CreatePost = async (req: Request, res: Response) => {
         try {
-            const input = this.postDTO.createPostInput(
-                req.body.creatorId,
-                req.body.content,
-                req.body.likes,
-                req.body.dislikes
-            )
+            const input: CreatePostInputDTO = {
+                token: req.headers.authorization,
+                content: req.body.content
+            }
 
             const outPut = await this.postBusiness.createPost(input)
 
@@ -55,13 +51,11 @@ export class PostController {
 
     public editPost = async (req: Request, res: Response) => {
         try {
-            const input = this.postDTO.editPostInput(
-                req.params.id,
-                req.body.creatorId,
-                req.body.content,
-                req.body.likes,
-                req.body.dislikes
-            )
+            const input: EditPostInputDTO = {
+                idToEdit: req.params.id,
+                content: req.body.content,
+                token: req.headers.authorization
+            }
 
             const outPut = await this.postBusiness.editPost(input)
 
@@ -79,7 +73,10 @@ export class PostController {
 
     public deletePost = async (req: Request, res: Response) => {
         try {
-            const input = { idToDelete: req.params.id }
+            const input: DeletePostInputDTO = { 
+                idToDelete: req.params.id,
+                token: req.headers.authorization
+            }
 
             const outPut = await this.postBusiness.deletePost(input)
 
@@ -99,15 +96,15 @@ export class PostController {
     public likeDislike = async (req: Request, res: Response) => {
         try {
 
-            const params = {
-                postId: req.params.id as string,
-                creatorId: req.body.creatorId as string
+            const input: LikeOrDislikePostInputDTO = {
+                idToLikeOrDislike: req.params.id,
+                token: req.headers.authorization,
+                like: req.body.like
             }
-            const input = await this.postDTO.EditLikeInput(req.body.likes)
-        
-            const outPut = await this.postBusiness.EditLikeDislike(params, input)
-    
-            res.status(200).send(outPut)
+           
+            await this.postBusiness.likeOrDislikePost(input)
+
+            res.status(200).end()
         } catch (error) {
             console.log(error)
 
@@ -117,8 +114,5 @@ export class PostController {
                 res.send("Erro inesperado")
             }
         }
-      
     }
-
-
 }

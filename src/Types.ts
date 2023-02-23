@@ -3,41 +3,10 @@ export enum Role {
     NORMAL = "NORMAL"
 }
 
-export interface UserDB {
+export interface TokenPayload {
     id: string,
     name: string,
-    email: string,
-    password: string,
-    role: Role,
-    created_at: string
-}
-
-export interface UserOutput {
-    id: string,
-    name: string,
-    email: string,
-    password: string,
-    role: Role,
-    createdAt: string
-}
-
-export interface UserModel {
-    id: string,
-    name: string,
-    email: string,
-    password: string,
-    role: Role,
-    createdAt: string
-}
-
-export interface PostDB {
-    id: string,
-    content: string,
-    likes: number,
-    dislikes: number,
-    created_at: string,
-    updated_at: string,
-    creator_id: string
+    role: Role
 }
 
 export interface PostModel {
@@ -53,18 +22,47 @@ export interface PostModel {
     }
 }
 
-
-export interface UpdatedPost {
-    content?: string,
-    likes?: number,
-    dislikes?: number, 
-    updated_at?: string
+export interface PostDB {
+    id: string,
+    creator_id: string,
+    content: string,
+    likes: number,
+    dislikes: number,
+    created_at: string,
+    updated_at: string,
 }
 
-export interface ActionDB {
-    post_id: string,
+export interface PostWithCreatorDB extends PostDB {
+    creator_name: string
+}
+
+export interface UserModel {
+    id: string,
+    name: string,
+    email: string,
+    password: string,
+    role: Role,
+    createdAt: string
+}
+
+export interface UserDB {
+    id: string,
+    name: string,
+    email: string,
+    password: string,
+    role: Role,
+    created_at: string
+}
+
+export interface LikeDislikeDB {
     user_id: string,
-    like: boolean
+    post_id: string,
+    like: number
+}
+
+export enum POST_LIKE {
+    ALREADY_LIKED = "ALREADY LIKED",
+    ALREADY_DISLIKED = "ALREADY DISLIKED"
 }
 
 

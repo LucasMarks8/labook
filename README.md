@@ -8,10 +8,10 @@
 
 ## Documentação
 
-- 
+- [Link] - (https://documenter.getpostman.com/view/24460668/2s93CNLsGa)
 
 ## Diagrama
-!
+![Labook](./src/images/216036534-2b3dfb48-7782-411a-bffd-36245b78594e.png)
 
 ## 🛠Conteúdos abordados
 
@@ -20,7 +20,13 @@
 3. [Express]
 4. [SQL e SQLite]
 5. [Knex]
-6. [Postman]
+6. [POO]
+7. [Arquitetura em camadas]
+8. [Geração de UUID]
+9. [Geração de hashes]
+10. [Autenticação e autorização]
+11. [Roteamento]
+12. [Postman]
 
 ## 🖨Descrição do Projeto
 <p>API onde é possivel realizar o cadastro via signup e login para criar posts, curtir e descutir publicações.</p>

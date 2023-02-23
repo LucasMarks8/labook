@@ -14,44 +14,48 @@ export class User {
         return this.id
     }
 
+    public setId(value: string): void {
+        this.id = value
+    }
+
     public getName(): string {
         return this.name
     }
 
-    public setName(newName: string): void {
-        this.name = newName
+    public setName(value: string): void {
+        this.name = value
     }
 
     public getEmail(): string {
         return this.email
     }
 
-    public setEmail(newEmail: string): void {
-        this.email = newEmail
+    public setEmail(value: string): void {
+        this.email = value
     }
 
     public getPassword(): string {
         return this.password
     }
 
-    public setPassword(newPassword: string): void {
-        this.password = newPassword
+    public setPassword(value: string): void {
+        this.password = value
     }
 
     public getRole(): Role {
         return this.role
     }
 
-    public setRole(newRole: Role): void {
-        this.role = newRole
+    public setRole(value: Role): void {
+        this.role = value
     }
 
     public getCreatedAt(): string {
         return this.createdAt
     }
 
-    public setCreatedAt(newCreatedAt: string): void {
-        this.createdAt = newCreatedAt
+    public setCreatedAt(value: string): void {
+        this.createdAt = value
     }
 
     public toDBModel(): UserDB {
