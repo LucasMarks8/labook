@@ -12,8 +12,7 @@ export class HashManager {
         return hash
     }
 
-    public compare = async (plaintext: string, hash: string) => {
-				// aqui não precisa do await porque o return já se comporta como um
+    public compare = async (plaintext: string, hash: string): Promise<boolean> => {
         return bcrypt.compare(plaintext, hash)
     }
 }

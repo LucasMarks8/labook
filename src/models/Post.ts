@@ -1,5 +1,4 @@
-import { GetPostWithUserDTO } from "../dtos/PostDTO"
-import { PostDB, PostModel, Role } from "../Types"
+import { PostDB, PostModel } from "../Types"
 
 export class Post {
     constructor(
@@ -9,65 +8,94 @@ export class Post {
         private dislikes: number,
         private createdAt: string,
         private updatedAt: string,
-        private creatorId: {
-            id: string,
-            name: string,
-            role: Role
-        }
+        private creatorId: string,
+        private creatorName: string,
     ) { }
 
     public getId(): string {
         return this.id
     }
 
-    public getCreatorId(id: string, name: string) {
-        return this.creatorId
+    public setId(value: string): void {
+         this.id = value
     }
 
     public getContent(): string {
         return this.content
     }
 
-    public setContent(newContent: string): void {
-        this.content = newContent
+    public setContent(value: string): void {
+        this.content = value
     }
 
     public getLikes(): number {
         return this.likes
     }
 
-    public setLikes(newLikes: number): void {
-        this.likes = newLikes
+    public setLikes(value: number): void {
+        this.likes = value
+    }
+
+    public addLike() {
+        this.likes += 1
+    }
+
+    public removeLike() {
+        this.likes -= 1
+    }
+
+    public addDislike() {
+        this.dislikes += 1
+    }
+
+    public removeDislike() {
+        this.dislikes -= 1
     }
 
     public getDislikes(): number {
         return this.dislikes
     }
 
-    public setDislikes(newDislikes: number): void {
-        this.dislikes = newDislikes
+    public setDislikes(value: number): void {
+        this.dislikes = value
     }
 
     public getCreatedAt(): string {
         return this.createdAt
     }
 
-    public setCreatedAt(newCreatedAt: string): void {
-        this.createdAt = newCreatedAt
+    public setCreatedAt(value: string): void {
+        this.createdAt = value
     }
 
     public getUpdatedAt(): string {
         return this.updatedAt
     }
 
-    public setUpdatedAt(newUpdatedAt: string): void {
-        this.updatedAt = newUpdatedAt
+    public setUpdatedAt(value: string): void {
+        this.updatedAt = value
+    }
+
+    public getCreatorId(): string {
+        return this.creatorId
+    }
+
+    public setCreatorId(value: string): void {
+        this.creatorId = value
+    }
+
+    public getCreatorName(): string {
+        return this.creatorName
+    }
+
+    public setCreatorName(value: string): void {
+        this.creatorName = value
     }
 
     public toDBModel(): PostDB {
         return {
             id:this.id,
-            creator_id:this.creatorId.id,
+            creator_id:this.creatorId,
             content:this.content,
             likes:this.likes,
             dislikes:this.dislikes,
@@ -76,19 +104,18 @@ export class Post {
         }
     }
 
-    public toBusinessModel(): GetPostWithUserDTO{
-        return{
-            id:this.id,
-            content:this.content,
-            likes:this.likes,
-            dislikes:this.dislikes,
-            createdAt:this.createdAt,
-            updatedAt:this.updatedAt,
-            creator:{
-                id:this.creatorId.id,
-                name:this.creatorId.name
+    public toBusinessModel(): PostModel {
+        return {
+            id: this.id,
+            content: this.content,
+            likes: this.likes,
+            dislikes: this.dislikes,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
+            creator: {
+                id: this.creatorId,
+                name: this.creatorName
             }
-        
         }
     }
 }

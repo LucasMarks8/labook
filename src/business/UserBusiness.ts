@@ -1,12 +1,12 @@
 import { UserDatabase } from "../database/UserDatabase";
-import { GetUsersInput, GetUsersOutput, LoginUserInputDTO, SignupUserInputDTO, SignupUserOutputDTO } from "../dtos/UserDTO";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
 import { User } from "../models/User";
+import { SignupInputDTO, LoginInputDTO } from "../dtos/UserDTO"
 import { HashManager } from "../services/HashManager";
 import { IdGenerator } from "../services/IdGenerator";
-import { TokenManager, TokenPayload } from "../services/TokenManager";
-import { UserDB, Role } from "../Types";
+import { TokenManager } from "../services/TokenManager";
+import { Role, TokenPayload } from "../Types";
 
 export const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
 export const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,12}$/g
@@ -19,52 +19,23 @@ export class UserBusiness {
         private hashManager: HashManager
     ) { }
 
-    public getUser = async (input: GetUsersInput): Promise<GetUsersOutput> => {
-        const { q, token } = input
-
-        if (typeof q !== "string" && q !== undefined) {
-            throw new BadRequestError("'q' deve ser string ou undefined");
-        }
-
-        if (typeof token !== "string") {
-            throw new BadRequestError("'token' está vazio");
-        }
-
-        const payload = this.tokenManager.getPayload(token)
-
-        if (payload === null) {
-            throw new BadRequestError("token não é válido");
-        }
-
-        if(payload.role !== Role.ADMIN) {
-            throw new BadRequestError("permissão não é suficiente"); 
-        }
-
-        const usersDB = await this.userDatabase.findUsers(q)
-
-        const users = usersDB.map((userDB) => {
-           const user = new User(
-                userDB.id,
-                userDB.name,
-                userDB.email,
-                userDB.password,
-                userDB.role,
-                userDB.created_at
-            )
-
-            return user.toBusinessModel()
-        })
-
-        const output: GetUsersOutput = users
-
-        return output
-    }
-
-    public signupUser = async (input: SignupUserInputDTO) => {
+    public signupUser = async (input: SignupInputDTO) => {
         const { name, email, password } = input
+
+        if (typeof name !== "string") {
+            throw new BadRequestError("'name' deve ser string")
+        }
+
+        if (typeof email !== "string") {
+            throw new BadRequestError("'email' deve ser string")
+        }
 
         if (!email.match(regexEmail)) {
             throw new BadRequestError("'email' deve possuir letras minúsculas, deve ter um @, letras minúsculas, ponto (.) e de 2 a 4 letras minúsculas")
+        }
+
+        if (typeof password !== "string") {
+            throw new BadRequestError("'password' deve ser string")
         }
 
         if (!password.match(regexPassword)) {
@@ -104,29 +75,28 @@ export class UserBusiness {
         const token = this.tokenManager.createToken(tokenPayload)
 
         const output = {
-            message: "usuário criado com sucesso",
             token: token
         }
 
         return output
     }
 
-    public loginUser = async (input: LoginUserInputDTO) => {
+    public loginUser = async (input: LoginInputDTO) => {
         const { email, password } = input
+
+        if (typeof email !== "string") {
+            throw new BadRequestError("'email' deve ser string")
+        }
+
+        if (typeof password !== "string") {
+            throw new BadRequestError("'password' deve ser string")
+        }
 
         const userDB = await this.userDatabase.findUserByEmail(email)
 
         if (!userDB) {
             throw new NotFoundError("'email' não encontrado");
         }
-
-        const passwordHash = await this.hashManager.compare(password, userDB.password)
-        console.log(password);
-        
-
-        // if(!passwordHash) {
-        //     throw new BadRequestError("'email' ou 'password' incorretos");
-        // }
 
         const user = new User(
             userDB.id,
@@ -137,6 +107,12 @@ export class UserBusiness {
             userDB.created_at
         )
 
+        const passwordHash = await this.hashManager.compare(password, userDB.password)
+
+        if (!passwordHash) {
+            throw new BadRequestError("'password' incorreto")
+        }
+        
         const payload: TokenPayload = {
             id: user.getId(),
             name: user.getName(),
@@ -146,7 +122,6 @@ export class UserBusiness {
         const token = this.tokenManager.createToken(payload)
 
         const output = {
-            message: "usuário logado com sucesso",
             token: token
         }
 
